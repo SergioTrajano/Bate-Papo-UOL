@@ -37,7 +37,7 @@ img {
     margin: 106px 0;
 }
 
-.chat div {
+.chat li {
     width: 100%;
     margin-bottom: 4px;
     flex-wrap: wrap;
@@ -49,11 +49,11 @@ img {
     background-color: #DCDCDC;
 }
 
-.reservada {
+.private_message {
     background-color: #FFDEDE;
 }
 
-.normal {
+.message {
     background-color: #FFFFFF;
 }
 
