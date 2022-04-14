@@ -1,0 +1,109 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #F3F3F3;
+}
+
+.topo {
+    width: 100%;
+    height: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 22px;
+    padding-right: 22px;
+    box-shadow: 0 5px 8px #888888;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    background-color: #ffffff;
+}
+
+img {
+    width: 75px;
+    height: 53px;
+}
+
+.topo ion-icon {
+    font-size: 45px;
+}
+
+.chat {
+    width: 100%;
+    margin: 106px 0;
+}
+
+.chat div {
+    width: 100%;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+    vertical-align: center;
+    padding: 10px 9px;
+}
+
+.status {
+    background-color: #DCDCDC;
+}
+
+.reservada {
+    background-color: #FFDEDE;
+}
+
+.normal {
+    background-color: #FFFFFF;
+}
+
+p {
+    font-size: 14px;
+    line-height: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    font-family: 'Roboto', sans-serif;
+}
+
+strong {
+    font-weight: bold;
+    font-family: 'Roboto', sans-serif;
+}
+
+span {
+    color: #888888;
+    font-family: 'Roboto', sans-serif;
+}
+
+.fundo {
+    width: 100%;
+    height: 80px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 18px;
+    box-shadow: 0 -5px 8px #888888;
+    background-color: #ffffff;
+}
+
+input {
+    width: calc(100% - 62px);
+    height: 30px;
+    font-family: 'Roboto', sans-serif;
+    font-style: italic;
+    font-size: 18px;
+    line-height: 22px;
+    border: hidden;
+}
+
+input:focus {
+    outline: none;
+}
+
+.fundo ion-icon {
+    font-size: 26px;
+}
