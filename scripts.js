@@ -1,4 +1,14 @@
+function atualizaDescricao() {
+    const descricao = document.querySelector(".fundo p");
+    const destinatario = document.querySelector(".participantes .selecionado p").innerHTML;
+    const visibilidade = document.querySelector(".visibilidade .selecionado p").innerHTML;
+    descricao.innerHTML = `Escrevendo para ${destinatario} (${visibilidade})`;
+}
+
 function seleciona(elemento, tipo) {
+    if (elemento.querySelector("p").innerHTML === usuario.name + " (Você)") {
+        return;
+    }
     const apagar = document.querySelector(`.${tipo} .selecionado`);
     const marca = elemento.querySelector(".check");
     if (apagar !== null) {
@@ -7,12 +17,14 @@ function seleciona(elemento, tipo) {
     }
     elemento.classList.add("selecionado");
     elemento.querySelector(".check").classList.remove("escondido");
+    atualizaDescricao();
 }
 
 function displayLateral(acao) {
     const barraLateral = document.querySelector(".menu-lateral");
     if (acao == 'esconder') {
         barraLateral.classList.add("escondido");
+        document.querySelector("input").focus();
     }
     if (acao == 'mostrar') {
         barraLateral.classList.remove("escondido");
@@ -25,13 +37,22 @@ function recarregar(erro) {
     location.reload();
 }
 
+function tipoMsg() {
+    const tipo = document.querySelector(".visibilidade .selecionado p").innerHTML;
+    if (tipo === "Reservadamente") {
+        return "private_message";
+    }
+    return "message";
+}
+
 function enviaMensagem() {
     const mesage = document.querySelector("input").value;
+    const destinatario = document.querySelector(".participantes .selecionado p").innerHTML;
     const msg = {
         from: usuario.name,
-        to: "Todos",
+        to: destinatario,
         text: mesage,
-        type: "message"
+        type: tipoMsg()
     };
     const prom = axios.post("https://mock-api.driven.com.br/api/v6/uol/messages", msg);
     prom.then(atualizaMensagens);
@@ -41,7 +62,7 @@ function enviaMensagem() {
 }
 
 function permitido(resposta, i) {
-    if (resposta.data[i].type === 'private_message' && resposta.data[i].to === usuario) {
+    if (resposta.data[i].type === 'private_message' && (resposta.data[i].to === usuario.name || resposta.data[i].from === usuario.name)) {
         return true;
     }
     if (resposta.data[i].type === 'status' || resposta.data[i].type === 'message') {
@@ -52,7 +73,7 @@ function permitido(resposta, i) {
 
 function tratarSucess(resposta) {
     const numMesages = resposta.data.length;
-    const mesages = document.querySelector(".chat ul");
+    const mesages = document.querySelector("ul");
     mesages.innerHTML = "";
     for (let i = 0; i < numMesages; i++) {
         if (permitido(resposta, i)) {
@@ -63,6 +84,62 @@ function tratarSucess(resposta) {
     }
     const ultimaMensagem = document.querySelector(`li:last-child`);
     ultimaMensagem.scrollIntoView(false);
+}
+
+function atualizaParticipantes() {
+    const promisse = axios.get("https://mock-api.driven.com.br/api/v6/uol/participants");
+    promisse.then(function (resposta) {
+        const listaParticipantes = document.querySelector(".participantes");
+        const participanteSelecionado = document.querySelector(".participantes .selecionado p").innerHTML;
+        if (participanteSelecionado === 'Todos') {
+            listaParticipantes.innerHTML = `
+            <div class="tipo selecionado" onclick="seleciona(this, 'participantes')">
+                <ion-icon name="people"></ion-icon>
+                <p>Todos</p>
+                <ion-icon name="checkmark" class="check"></ion-icon>
+            </div>
+        `;
+        } else {
+            listaParticipantes.innerHTML = `
+            <div class="tipo" onclick="seleciona(this, 'participantes')">
+                <ion-icon name="people"></ion-icon>
+                <p>Todos</p>
+                <ion-icon name="checkmark" class="check escondido"></ion-icon>
+            </div>
+        `;
+        }
+        for (let i = 0; i < resposta.data.length; i++) {
+            if (resposta.data[i].name === usuario.name) {
+                listaParticipantes.innerHTML += `
+            <div class="tipo" onclick="seleciona(this, 'participantes')">
+                <ion-icon name="person-circle"></ion-icon>
+                <p>${resposta.data[i].name} (Você)</p>
+                <ion-icon name="checkmark" class="check escondido"></ion-icon>
+            </div>
+            `;
+            } else {
+                if (participanteSelecionado === resposta.data[i].name) {
+                    listaParticipantes.innerHTML += `
+                <div class="tipo selecionado" onclick="seleciona(this, 'participantes')">
+                    <ion-icon name="person-circle"></ion-icon>
+                    <p>${resposta.data[i].name}</p>
+                    <ion-icon name="checkmark" class="check"></ion-icon>
+                </div>
+                `;
+                } else {
+                    listaParticipantes.innerHTML += `
+                <div class="tipo" onclick="seleciona(this, 'participantes')">
+                    <ion-icon name="person-circle"></ion-icon>
+                    <p>${resposta.data[i].name}</p>
+                    <ion-icon name="checkmark" class="check escondido"></ion-icon>
+                </div>
+                `;
+                }
+            }
+            
+        }
+    }
+    );
 }
 
 function atualizaMensagens() {
@@ -77,8 +154,10 @@ function manterConexao() {
 
 function tratarSucesso() {
     atualizaMensagens();
-    setInterval(manterConexao, 4000);
+    atualizaParticipantes();
+    setInterval(manterConexao, 5000);
     setInterval(atualizaMensagens, 3000);
+    setInterval(atualizaParticipantes, 10000);
 }
 
 function cadastraUser() {
