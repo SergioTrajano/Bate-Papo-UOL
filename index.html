@@ -12,15 +12,52 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="topo">
-        <img src="logo 1 (1).png" alt="">
-        <ion-icon name="people"></ion-icon>
+    <div class="menu-lateral escondido">
+        <div class="fundo-lateral" onclick="displayLateral('esconder')"></div>
+        <div class="barra-lateral">
+            <p class="negrito">
+                Escolha um contato
+            </p>
+            <p class="negrito">
+                para enviar mensagem:
+            </p>
+            <div class="participantes">
+                <div class="tipo" onclick="seleciona(this, 'participantes')">
+                    <ion-icon name="people"></ion-icon>
+                    <p>Todos</p>
+                    <ion-icon name="checkmark" class="check escondido"></ion-icon>
+                </div>
+            </div>
+            <p class="negrito">
+                Escolha a visibilidade:
+            </p>
+            <div class="visibilidade">
+                <div class="tipo" onclick="seleciona(this, 'visibilidade')">
+                    <ion-icon name="lock-open"></ion-icon>
+                    <p>Público</p>
+                    <ion-icon name="checkmark" class="check escondido"></ion-icon>
+                </div>
+                <div class="tipo" onclick="seleciona(this, 'visibilidade')">
+                    <ion-icon name="lock-closed"></ion-icon>
+                    <p>Reservadamente</p>
+                    <ion-icon name="checkmark" class="check escondido"></ion-icon>
+                </div>
+            </div>
+        </div>
     </div>
-    <ul class="chat">
-    </ul>
+    
+    <div class="topo">
+        <img src="logo 1 (1).png" alt="" style="width: 75px;
+        height: 53px;">
+        <ion-icon name="people" onclick="displayLateral('mostrar')"></ion-icon>
+    </div>
+    <div class="chat">
+        <ul >
+        </ul>
+    </div>
     <div class="fundo">
         <input type="text" placeholder="Escreva aqui" autofocus>
-        <ion-icon name="paper-plane-outline"></ion-icon>
+        <ion-icon name="paper-plane-outline" onclick="enviaMensagem()"></ion-icon>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
