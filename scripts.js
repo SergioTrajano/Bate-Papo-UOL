@@ -1,3 +1,12 @@
+function habilitarEnter() {
+    const input = document.querySelector("input");
+    input.addEventListener('keypress', (e) => {
+        if (e.key === "Enter") {
+            enviaMensagem();
+        }
+    });
+}
+
 function atualizaDescricao() {
     const descricao = document.querySelector(".fundo p");
     const destinatario = document.querySelector(".participantes .selecionado p").innerHTML;
@@ -47,6 +56,9 @@ function tipoMsg() {
 
 function enviaMensagem() {
     const mesage = document.querySelector("input").value;
+    if (mesage == "") {
+        return;
+    }
     const destinatario = document.querySelector(".participantes .selecionado p").innerHTML;
     const msg = {
         from: usuario.name,
@@ -62,6 +74,9 @@ function enviaMensagem() {
 }
 
 function permitido(resposta, i) {
+    if (resposta.data[i].to === "Todos") {
+        return true;
+    }
     if (resposta.data[i].type === 'private_message' && (resposta.data[i].to === usuario.name || resposta.data[i].from === usuario.name)) {
         return true;
     }
@@ -155,6 +170,7 @@ function manterConexao() {
 function tratarSucesso() {
     atualizaMensagens();
     atualizaParticipantes();
+    habilitarEnter();
     setInterval(manterConexao, 5000);
     setInterval(atualizaMensagens, 3000);
     setInterval(atualizaParticipantes, 10000);
