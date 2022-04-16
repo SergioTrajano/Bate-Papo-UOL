@@ -65,12 +65,12 @@ function tipoMsg() {
 
 function enviaMensagem() {
     const user = document.querySelector(".login input").value;
+    const destinatario = document.querySelector(".participantes .selecionado p").innerHTML;
     const mesage = document.querySelector(".fundo input").value;
     if (mesage === "") {
         document.querySelector(".fundo input").focus();
         return;
     }
-    const destinatario = document.querySelector(".participantes .selecionado p").innerHTML;
     const msg = {
         from: user,
         to: destinatario,
@@ -89,16 +89,17 @@ function permitido(resposta, i) {
     if (resposta.data[i].to === "Todos") {
         return true;
     }
-    if (resposta.data[i].type === 'private_message' && (resposta.data[i].to === user || resposta.data[i].from === user)) {
+    if (resposta.data[i].type === "private_message" && (resposta.data[i].to === user || resposta.data[i].from === user)) {
         return true;
     }
-    if (resposta.data[i].type === 'status' || resposta.data[i].type === 'message') {
+    if (resposta.data[i].type === "status" || resposta.data[i].type === "message") {
         return true;
     }
     return false;
 }
 
-function tratarSucess(resposta) {
+// Ver se .filter() funciona e achar um jeito de só exibir as mensagens novas, testar filter;
+function atualizarMsg(resposta) {
     const numMesages = resposta.data.length;
     const mesages = document.querySelector("ul");
     mesages.innerHTML = "";
@@ -109,17 +110,27 @@ function tratarSucess(resposta) {
             `
         }
     }
-    const ultimaMensagem = document.querySelector(`li:last-child`);
+    const ultimaMensagem = document.querySelector("li:last-child");
     ultimaMensagem.scrollIntoView(false);
+}
+
+function particpanteSelecionadoAtivo(elemento) {
+    if (elemento === null) {
+        return true;
+    }
+    if (elemento.innerHTML === "Todos") {
+        return true;
+    }
+    return false;
 }
 
 function atualizaParticipantes() {
     const promisse = axios.get("https://mock-api.driven.com.br/api/v6/uol/participants");
     promisse.then(function (resposta) {
         const listaParticipantes = document.querySelector(".participantes");
-        const participanteSelecionado = document.querySelector(".participantes .selecionado p").innerHTML;
+        const participanteSelecionado = document.querySelector(".participantes .selecionado p");
         const user = document.querySelector(".login input").value;
-        if (participanteSelecionado === 'Todos') {
+        if (particpanteSelecionadoAtivo(participanteSelecionado)) {
             listaParticipantes.innerHTML = `
             <div class="tipo selecionado" onclick="seleciona(this, 'participantes')">
                 <ion-icon name="people"></ion-icon>
@@ -171,7 +182,7 @@ function atualizaParticipantes() {
 
 function atualizaMensagens() {
     const promisse = axios.get('https://mock-api.driven.com.br/api/v6/uol/messages');
-    promisse.then(tratarSucess);
+    promisse.then(atualizarMsg);
 }
 
 function manterConexao() {
@@ -180,7 +191,7 @@ function manterConexao() {
     conexao.catch(recarregar);
 }
 
-function tratarSucesso() {
+function validar() {
     const telaLogin = document.querySelector(".login");
     telaLogin.classList.add("escondido");
     document.querySelector(".fundo input").focus();
@@ -192,6 +203,18 @@ function tratarSucesso() {
     setInterval(atualizaParticipantes, 10000);
 }
 
+function carregando() {
+    const input = document.querySelector(".login input");
+    const botao = document.querySelector(".login button");
+    const gif = document.querySelector(".login .gif");
+    const p = document.querySelector(".login p");
+    input.classList.add("escondido");
+    botao.classList.add("escondido");
+    gif.classList.remove("escondido");
+    p.classList.remove("escondido");
+    setTimeout(validar, 3000);
+}
+
 function erroLogin() {
     const input = document.querySelector(".login input");
     input.value = "";
@@ -201,7 +224,7 @@ function erroLogin() {
 function validarUser() {
     const user = { name: document.querySelector(".login input").value};
     const requisicao = axios.post("https://mock-api.driven.com.br/api/v6/uol/participants", user);
-    requisicao.then(tratarSucesso);
+    requisicao.then(carregando);
     requisicao.catch(erroLogin);
 }
 
