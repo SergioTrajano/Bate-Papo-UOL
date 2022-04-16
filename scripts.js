@@ -1,5 +1,14 @@
-function habilitarEnter() {
-    const input = document.querySelector("input");
+function habilitarEnterLogin() {
+    const input = document.querySelector(".login input");
+    input.addEventListener('keypress', (e) => {
+        if (e.key === "Enter") {
+            validarUser();
+        }
+    });
+}
+
+function habilitarEnterFundo() {
+    const input = document.querySelector(".fundo input");
     input.addEventListener('keypress', (e) => {
         if (e.key === "Enter") {
             enviaMensagem();
@@ -15,7 +24,8 @@ function atualizaDescricao() {
 }
 
 function seleciona(elemento, tipo) {
-    if (elemento.querySelector("p").innerHTML === usuario.name + " (Você)") {
+    const user = document.querySelector(".login input").value;
+    if (elemento.querySelector("p").innerHTML === user + " (Você)") {
         return;
     }
     const apagar = document.querySelector(`.${tipo} .selecionado`);
@@ -33,7 +43,7 @@ function displayLateral(acao) {
     const barraLateral = document.querySelector(".menu-lateral");
     if (acao == 'esconder') {
         barraLateral.classList.add("escondido");
-        document.querySelector("input").focus();
+        document.querySelector(".fundo input").focus();
     }
     if (acao == 'mostrar') {
         barraLateral.classList.remove("escondido");
@@ -41,7 +51,6 @@ function displayLateral(acao) {
 }
 
 function recarregar(erro) {
-    alert(erro.response.status);
     alert("Você perdeu a conexão com o servidor");
     location.reload();
 }
@@ -55,13 +64,15 @@ function tipoMsg() {
 }
 
 function enviaMensagem() {
-    const mesage = document.querySelector("input").value;
-    if (mesage == "") {
+    const user = document.querySelector(".login input").value;
+    const mesage = document.querySelector(".fundo input").value;
+    if (mesage === "") {
+        document.querySelector(".fundo input").focus();
         return;
     }
     const destinatario = document.querySelector(".participantes .selecionado p").innerHTML;
     const msg = {
-        from: usuario.name,
+        from: user,
         to: destinatario,
         text: mesage,
         type: tipoMsg()
@@ -69,15 +80,16 @@ function enviaMensagem() {
     const prom = axios.post("https://mock-api.driven.com.br/api/v6/uol/messages", msg);
     prom.then(atualizaMensagens);
     prom.catch(recarregar);
-    document.querySelector("input").value = "";
-    document.querySelector("input").focus();
+    document.querySelector(".fundo input").value = "";
+    document.querySelector(".fundo input").focus();
 }
 
 function permitido(resposta, i) {
+    const user = document.querySelector(".login input").value;
     if (resposta.data[i].to === "Todos") {
         return true;
     }
-    if (resposta.data[i].type === 'private_message' && (resposta.data[i].to === usuario.name || resposta.data[i].from === usuario.name)) {
+    if (resposta.data[i].type === 'private_message' && (resposta.data[i].to === user || resposta.data[i].from === user)) {
         return true;
     }
     if (resposta.data[i].type === 'status' || resposta.data[i].type === 'message') {
@@ -106,6 +118,7 @@ function atualizaParticipantes() {
     promisse.then(function (resposta) {
         const listaParticipantes = document.querySelector(".participantes");
         const participanteSelecionado = document.querySelector(".participantes .selecionado p").innerHTML;
+        const user = document.querySelector(".login input").value;
         if (participanteSelecionado === 'Todos') {
             listaParticipantes.innerHTML = `
             <div class="tipo selecionado" onclick="seleciona(this, 'participantes')">
@@ -124,7 +137,7 @@ function atualizaParticipantes() {
         `;
         }
         for (let i = 0; i < resposta.data.length; i++) {
-            if (resposta.data[i].name === usuario.name) {
+            if (resposta.data[i].name === user) {
                 listaParticipantes.innerHTML += `
             <div class="tipo" onclick="seleciona(this, 'participantes')">
                 <ion-icon name="person-circle"></ion-icon>
@@ -151,7 +164,6 @@ function atualizaParticipantes() {
                 `;
                 }
             }
-            
         }
     }
     );
@@ -163,27 +175,34 @@ function atualizaMensagens() {
 }
 
 function manterConexao() {
-    const conexao = axios.post('https://mock-api.driven.com.br/api/v6/uol/status', usuario);
+    const user = {name: document.querySelector(".login input").value};
+    const conexao = axios.post('https://mock-api.driven.com.br/api/v6/uol/status', user);
     conexao.catch(recarregar);
 }
 
 function tratarSucesso() {
+    const telaLogin = document.querySelector(".login");
+    telaLogin.classList.add("escondido");
+    document.querySelector(".fundo input").focus();
     atualizaMensagens();
     atualizaParticipantes();
-    habilitarEnter();
+    habilitarEnterFundo();
     setInterval(manterConexao, 5000);
     setInterval(atualizaMensagens, 3000);
     setInterval(atualizaParticipantes, 10000);
 }
 
-function cadastraUser() {
-    usuario = {name: prompt("Digite seu nome")};
-    requisicao = axios.post("https://mock-api.driven.com.br/api/v6/uol/participants", usuario);
-    requisicao.then(tratarSucesso());
-    requisicao.catch(cadastraUser);
+function erroLogin() {
+    const input = document.querySelector(".login input");
+    input.value = "";
+    input.placeholder = "Nome em uso. Digite outro nome";
 }
 
-let usuario = {name: prompt("Digite seu nome")};
-let requisicao = axios.post("https://mock-api.driven.com.br/api/v6/uol/participants", usuario);
-requisicao.then(tratarSucesso());
-requisicao.catch(cadastraUser);
+function validarUser() {
+    const user = { name: document.querySelector(".login input").value};
+    const requisicao = axios.post("https://mock-api.driven.com.br/api/v6/uol/participants", user);
+    requisicao.then(tratarSucesso);
+    requisicao.catch(erroLogin);
+}
+
+habilitarEnterLogin();

@@ -12,6 +12,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="login">
+        <img src="logo 1 (1).png" alt="" style="width: 130px; height: 92px;">
+        <input type="text" placeholder="Digite seu nome" autofocus>
+        <button onclick="validarUser()">
+            Entrar
+        </button>
+    </div>
     <div class="menu-lateral escondido">
         <div class="fundo-lateral" onclick="displayLateral('esconder')"></div>
         <div class="barra-lateral">
@@ -45,7 +52,6 @@
             </div>
         </div>
     </div>
-    
     <div class="topo">
         <img src="logo 1 (1).png" alt="" style="width: 75px;
         height: 53px;">
@@ -62,9 +68,7 @@
         </div>
         <ion-icon name="paper-plane-outline" onclick="enviaMensagem()"></ion-icon>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    
     <script src="scripts.js"></script>
     <script type="module" src="https://unpkg.com/ionicons@5.4.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule="" src="https://unpkg.com/ionicons@5.4.0/dist/ionicons/ionicons.js"></script>

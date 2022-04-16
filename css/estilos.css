@@ -7,6 +7,41 @@ body {
     background-color: #F3F3F3;
 }
 
+.login {
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.login img {
+    margin-top: 72px;
+    margin-bottom: 95px;
+}
+
+.login input {
+    min-width: 261px;
+    height: 55px;
+    border-radius: 5px;
+    border: 1px solid #D7D7D7;
+    text-align: center;
+}
+
+.login button {
+    border-radius: 9px;
+    box-shadow: 0 5px 5px #888888;
+    width: 110px;
+    height: 45px;
+    background-color: #E7E7E7;
+    margin-top: 20px;
+}
+
 .topo {
     width: 100%;
     height: 80px;
