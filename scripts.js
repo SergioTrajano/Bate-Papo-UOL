@@ -98,7 +98,6 @@ function permitido(resposta, i) {
     return false;
 }
 
-// Ver se .filter() funciona e achar um jeito de só exibir as mensagens novas, testar filter;
 function atualizarMsg(resposta) {
     const numMesages = resposta.data.length;
     const mesages = document.querySelector("ul");
@@ -124,11 +123,34 @@ function particpanteSelecionadoAtivo(elemento) {
     return false;
 }
 
+function participanteAtivo(selecionado, nome) {
+    if (selecionado === null) {
+        return false;
+    }
+    if (selecionado.innerHTML === nome) {
+        return true;
+    }
+    return false;
+}
+
+function participanteAt(resposta) {
+    const part = document.querySelector(".participantes .selecionado p");
+    if (part === null) {
+        return null
+    }
+    for (let i = 0; i < resposta.length; i++) {
+        if (resposta[i].name === part.innerHTML) {
+            return part;
+        }
+    }
+    return null;
+}
+
 function atualizaParticipantes() {
     const promisse = axios.get("https://mock-api.driven.com.br/api/v6/uol/participants");
     promisse.then(function (resposta) {
         const listaParticipantes = document.querySelector(".participantes");
-        const participanteSelecionado = document.querySelector(".participantes .selecionado p");
+        const participanteSelecionado = participanteAt(resposta.data);
         const user = document.querySelector(".login input").value;
         if (particpanteSelecionadoAtivo(participanteSelecionado)) {
             listaParticipantes.innerHTML = `
@@ -136,16 +158,15 @@ function atualizaParticipantes() {
                 <ion-icon name="people"></ion-icon>
                 <p>Todos</p>
                 <ion-icon name="checkmark" class="check"></ion-icon>
-            </div>
-        `;
+            </div>`;
+            document.querySelector(".fundo p").innerHTML = `Escrevendo para Todos (${document.querySelector(".visibilidade .selecionado p").innerHTML})`
         } else {
             listaParticipantes.innerHTML = `
             <div class="tipo" onclick="seleciona(this, 'participantes')">
                 <ion-icon name="people"></ion-icon>
                 <p>Todos</p>
                 <ion-icon name="checkmark" class="check escondido"></ion-icon>
-            </div>
-        `;
+            </div>`;
         }
         for (let i = 0; i < resposta.data.length; i++) {
             if (resposta.data[i].name === user) {
@@ -154,25 +175,23 @@ function atualizaParticipantes() {
                 <ion-icon name="person-circle"></ion-icon>
                 <p>${resposta.data[i].name} (Você)</p>
                 <ion-icon name="checkmark" class="check escondido"></ion-icon>
-            </div>
-            `;
+            </div>`;
             } else {
-                if (participanteSelecionado === resposta.data[i].name) {
+                if (
+                    participanteAtivo(participanteSelecionado, resposta.data[i].name)) {
                     listaParticipantes.innerHTML += `
                 <div class="tipo selecionado" onclick="seleciona(this, 'participantes')">
                     <ion-icon name="person-circle"></ion-icon>
                     <p>${resposta.data[i].name}</p>
                     <ion-icon name="checkmark" class="check"></ion-icon>
-                </div>
-                `;
+                </div>`;
                 } else {
                     listaParticipantes.innerHTML += `
                 <div class="tipo" onclick="seleciona(this, 'participantes')">
                     <ion-icon name="person-circle"></ion-icon>
                     <p>${resposta.data[i].name}</p>
                     <ion-icon name="checkmark" class="check escondido"></ion-icon>
-                </div>
-                `;
+                </div>`;
                 }
             }
         }
